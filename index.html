@@ -1,1 +1,63 @@
+<!DOCTYPE html>
+<html lang="ar">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Padel Tracker</title>
+    <link rel="manifest" href="manifest.json">
+    <style>
+        body { font-family: sans-serif; background: #f0f2f5; padding: 20px; text-align: center; }
+        .container { background: white; padding: 20px; border-radius: 15px; box-shadow: 0 4px 10px rgba(0,0,0,0.1); max-width: 500px; margin: auto; }
+        h2 { color: #1a5c20; }
+        table { width: 100%; border-collapse: collapse; margin-top: 20px; }
+        th, td { border: 1px solid #ddd; padding: 12px; text-align: center; }
+        th { background-color: #28a745; color: white; }
+        input { width: 90%; padding: 8px; border: 1px solid #ccc; border-radius: 5px; font-size: 16px; }
+        .btn-save { background: #28a745; color: white; border: none; padding: 15px; border-radius: 8px; margin-top: 20px; cursor: pointer; width: 100%; font-size: 18px; font-weight: bold; }
+    </style>
+</head>
+<body>
+<div class="container">
+    <h2>🎾 Padel Tracker</h2>
+    <table>
+        <thead>
+            <tr><th>L-la3ib</th><th>Dkhoul</th><th>Khourouj</th></tr>
+        </thead>
+        <tbody id="table-body">
+            <tr><td><input type="text" class="name"></td><td><input type="time"></td><td><input type="time"></td></tr>
+            <tr><td><input type="text" class="name"></td><td><input type="time"></td><td><input type="time"></td></tr>
+        </tbody>
+    </table>
+    <button class="btn-save" onclick="saveData()">Enregistrer</button>
+</div>
+<script>
+    if ('serviceWorker' in navigator) {
+        navigator.serviceWorker.register('./sw.js');
+    }
+    function saveData() {
+        const rows = document.querySelectorAll('#table-body tr');
+        const data = Array.from(rows).map(row => ({
+            name: row.querySelector('.name').value,
+            in: row.querySelectorAll('input[type="time"]')[0].value,
+            out: row.querySelectorAll('input[type="time"]')[1].value
+        }));
+        localStorage.setItem('padelData', JSON.stringify(data));
+        alert('Tsajel!');
+    }
+    window.onload = () => {
+        const saved = JSON.parse(localStorage.getItem('padelData'));
+        if (saved) {
+            const rows = document.querySelectorAll('#table-body tr');
+            saved.forEach((item, i) => {
+                if (rows[i]) {
+                    rows[i].querySelector('.name').value = item.name;
+                    rows[i].querySelectorAll('input[type="time"]')[0].value = item.in;
+                    rows[i].querySelectorAll('input[type="time"]')[1].value = item.out;
+                }
+            });
+        }
+    };
+</script>
+</body>
+</html>
 
